@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>子どもの感情への対応</title>
+<style>
+  /* =========================================================
+     1. CSS Variables & Theming (Light / Dark Mode)
+  ========================================================= */
+  :root {
+    /* Color Palette - Light Mode */
+    --bg-main: #f4f6f9;
+    --bg-card: #ffffff;
+    --text-main: #2d3748;
+    --text-muted: #4a5568;
+    --border-color: #e2e8f0;
+    
+    /* Semantic Colors */
+    --primary: #3182ce;
+    --primary-light: #ebf8ff;
+    --success: #38a169;
+    --success-light: #f0fff4;
+    --warning: #dd6b20;
+    --warning-light: #fffaf0;
+    --danger: #e53e3e;
+    --danger-light: #fff5f5;
+    
+    /* Specific Element Colors */
+    --father-color: #3182ce;
+    --father-bg: #ebf8ff;
+    --child-color: #d69e2e;
+    --child-bg: #fffff0;
+
+    /* Typography & Spacing */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Color Palette - Dark Mode */
+      --bg-main: #1a202c;
+      --bg-card: #2d3748;
+      --text-main: #f7fafc;
+      --text-muted: #a0aec0;
+      --border-color: #4a5568;
+      
+      /* Semantic Colors - Dark Adjusted */
+      --primary: #63b3ed;
+      --primary-light: #2a4365;
+      --success: #68d391;
+      --success-light: #22543d;
+      --warning: #fbd38d;
+      --warning-light: #7b341e;
+      --danger: #fc8181;
+      --danger-light: #742a2a;
+      
+      /* Specific Element Colors */
+      --father-color: #63b3ed;
+      --father-bg: #2a4365;
+      --child-color: #f6e05e;
+      --child-bg: #744210;
+
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* =========================================================
+     2. Reset & Base Styles
+  ========================================================= */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-family);
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.4;
+    margin-top: 6px;
+    color: var(--text-main);
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-main);
+  }
+
+  p {
+    margin-bottom: 8px;
+  }
+
+  ul {
+    margin-left: 18px;
+    margin-bottom: 8px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  /* =========================================================
+     3. Component Styles
+  ========================================================= */
+  .card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .meta-info {
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: -8px;
+  }
+
+  /* Highlight Texts */
+  .mark-primary { color: var(--primary); font-weight: bold; }
+  .mark-danger { color: var(--danger); font-weight: bold; }
+  .mark-success { color: var(--success); font-weight: bold; }
+
+  /* SVG Icons */
+  .icon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* --- Summary Section --- */
+  .summary-card {
+    border: 2px solid var(--primary);
+    background-color: var(--primary-light);
+  }
+  .summary-card h2 {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+  }
+  .action-point {
+    background-color: var(--bg-card);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border: 1px dashed var(--primary);
+    color: var(--text-main);
+  }
+  .action-point span {
+    color: var(--primary);
+    font-size: 1.3rem;
+  }
+
+  /* --- Flow Section (Timeline) --- */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 12px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 23px;
+    width: 2px;
+    background-color: var(--border-color);
+    z-index: 0;
+  }
+  .timeline-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 16px;
+    padding-bottom: 14px;
+  }
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+  .timeline-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .timeline-content {
+    background-color: var(--bg-main);
+    padding: 8px 12px;
+    border-radius: 8px;
+    flex-grow: 1;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-color);
+  }
+  .timeline-item.active .timeline-dot {
+    background-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-light);
+  }
+  .timeline-item.active .timeline-content {
+    border-color: var(--primary);
+    font-weight: bold;
+  }
+  .score-badge {
+    display: inline-block;
+    background-color: var(--success);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 6px;
+  }
+
+  /* --- Risk Section (Comparison) --- */
+  .comparison-box {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .comp-panel {
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .comp-panel h4 {
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .panel-father {
+    background-color: var(--father-bg);
+    border: 1px solid var(--father-color);
+  }
+  .panel-father h4 { color: var(--father-color); }
+  
+  .panel-child {
+    background-color: var(--child-bg);
+    border: 1px solid var(--warning);
+  }
+  .panel-child h4 { color: var(--warning); }
+  
+  .comp-gap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--danger);
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 4px 0;
+  }
+
+  /* --- Improvement Section (Steps) --- */
+  .step-box {
+    background-color: var(--bg-main);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--success);
+  }
+  .step-box:last-child {
+    margin-bottom: 0;
+  }
+  .level-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .level-item {
+    background-color: var(--bg-card);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .level-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .level-text {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .level-item.minimum {
+    border-color: var(--success);
+    background-color: var(--success-light);
+  }
+  
+  /* --- Target of Apology (vs) --- */
+  .apology-target {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .apology-item {
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+  .apology-ok {
+    background-color: var(--success-light);
+    border: 1px solid var(--success);
+  }
+  .apology-ng {
+    background-color: var(--bg-main);
+    border: 1px dashed var(--text-muted);
+    color: var(--text-muted);
+  }
+  .apology-icon {
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .apology-ok .apology-icon { color: var(--success); }
+  .apology-ng .apology-icon { color: var(--text-muted); }
+
+  /* --- Remote Work Section --- */
+  .formula-box {
+    text-align: center;
+    background-color: var(--primary-light);
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 10px;
+    border: 1px solid var(--primary);
+  }
+  .speech-bubble {
+    position: relative;
+    background: var(--bg-main);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.95rem;
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -6px;
+    margin-top: -6px;
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent var(--border-color) transparent transparent;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    margin-top: -5px;
+    border-width: 5px 5px 5px 0;
+    border-style: solid;
+    border-color: transparent var(--bg-main) transparent transparent;
+  }
+
+  /* --- Alerts Section --- */
+  .alert-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .alert-box {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  .alert-danger {
+    background-color: var(--danger-light);
+    border: 1px solid var(--danger);
+  }
+  .alert-danger h3 { color: var(--danger); }
+  .alert-warning {
+    background-color: var(--warning-light);
+    border: 1px solid var(--warning);
+  }
+  .alert-warning h3 { color: var(--warning); }
+  
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    list-style: none;
+    margin-left: 0;
+  }
+  .tag {
+    background-color: var(--bg-card);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
+  .alert-danger .tag { border-color: var(--danger); }
+  .alert-warning .tag { border-color: var(--warning); }
+
+</style>
+</head>
+<body>
+
+<main>
+  <h1>子どもの感情への対応</h1>
+  <div class="meta-info">整理日: 2026年5月28日</div>
+
+  <!-- 結論セクション -->
+  <section class="card summary-card">
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      推奨（結論）
+    </h2>
+    <p>今の対応（無言で離れ、後で修復）は<strong>大きく間違っていません。</strong><br>きつい言葉を言うよりはかなり良い対応です。</p>
+    <div class="action-point">
+      改善アクション<br>
+      立ち去る前に <span>「戻る」</span> と一言だけ足す
+    </div>
+  </section>
+
+  <!-- フローと評価 -->
+  <section class="card">
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
+      1. 現在の対応フローと評価
+    </h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">優衣ちゃんが泣く・怒る・ふてくされる</div>
+      </div>
+      <div class="timeline-item active">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          ゆうきさんがきつい言葉を避けるため、<br>
+          <span class="mark-primary">無言で距離を置く</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">優衣ちゃんが落ち着く</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">ゆうきさんから「さっきはごめんね」と声をかけ、修復する</div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 16px;">
+      <p style="margin-bottom: 0;">怒鳴る・責めるより明らかに良い対応です。</p>
+      <div class="score-badge">評価: 70〜80点</div>
+    </div>
+  </section>
+
+  <!-- 認識のズレ（リスク） -->
+  <section class="card">
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      2. 「無言で立ち去る」のリスク
+    </h2>
+    <p>無言で離れると理由が伝わらず、すれ違いが生じる可能性があります。</p>
+    
+    <div class="comparison-box">
+      <!-- 父親の意図 -->
+      <div class="comp-panel panel-father">
+        <h4>
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          ゆうきさんの意図（自制）
+        </h4>
+        <ul>
+          <li>きつい言葉を言わないため</li>
+          <li>自分を落ち着かせるため</li>
+        </ul>
+      </div>
+
+      <!-- ギャップ -->
+      <div class="comp-gap">
+        ▼ しかし、無言だと理由が伝わらず… ▼
+      </div>
+
+      <!-- 子の受け取り -->
+      <div class="comp-panel panel-child">
+        <h4>
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          優衣ちゃんの受け取り方（不安）
+        </h4>
+        <ul>
+          <li>お父さんに嫌われた</li>
+          <li>見捨てられた</li>
+          <li>私が泣くとお父さんはいなくなる</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size: 0.9rem; margin-top: 12px; color: var(--text-muted);">※現在は後で修復できているため、深刻な悪影響の可能性は低いです。</p>
+  </section>
+
+  <!-- 改善策 -->
+  <section class="card">
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      3. 最も簡単な改善策
+    </h2>
+
+    <div class="step-box">
+      <h3>① 立ち去る前：レベル別対応</h3>
+      <p>毎回きれいに言う必要はありません。</p>
+      <div class="level-list">
+        <div class="level-item minimum">
+          <span class="level-label">最低ライン（これだけで十分）</span>
+          <span class="level-text">「戻る。」</span>
+        </div>
+        <div class="level-item">
+          <span class="level-label">余裕があれば</span>
+          <span class="level-text">「きつく言いそうだから離れる。戻る。」</span>
+        </div>
+        <div class="level-item">
+          <span class="level-label">さらに余裕があれば</span>
+          <span class="level-text">「悲しかったのはわかった。きつく言いそうだから離れる。戻る。」</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-box" style="border-left-color: var(--primary);">
+      <h3>② 落ち着いた後の修復</h3>
+      <p>「さっきはごめんね」をより良くするため、<span class="mark-primary">謝る対象を明確</span>にします。</p>
+      
+      <div class="apology-target">
+        <div class="apology-item apology-ok">
+          <div class="apology-icon">〇</div>
+          <div>
+            <strong>“無言で離れたこと” を謝る</strong><br>
+            <span style="font-size: 0.9rem;">「さっき何も言わずに離れてごめんね。嫌いになったわけじゃないよ。きつい言葉を言いたくなかったから離れたんだよ。」</span>
+          </div>
+        </div>
+        <div class="apology-item apology-ng">
+          <div class="apology-icon">✕</div>
+          <div>
+            <strong>“思い通りにしなかったこと” は謝らない</strong><br>
+            <span style="font-size: 0.9rem;">要求を飲めなかったこと自体を謝る必要はありません。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 在宅勤務中の対応 -->
+  <section class="card">
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M20 3H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h4v2h8v-2h4c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 13H4V5h16v11z"/></svg>
+      4. 在宅勤務中の対応
+    </h2>
+    <p>仕事中は、長く受け止めなくてよいです。境界線を引くのがポイントです。</p>
+
+    <div class="formula-box">
+      短く受け止める ＋ 後で聞く予約（約束）
+    </div>
+
+    <div>
+      <div class="speech-bubble">「来たのはわかった。今は仕事中。<strong>5分後に聞く。</strong>」</div>
+      <div class="speech-bubble">「泣くくらい嫌だったんだね。今は仕事中。<strong>あとで聞く。</strong>」</div>
+      <div class="speech-bubble">「ここは仕事の部屋。今は入らない。<strong>あとで聞く。</strong>」</div>
+    </div>
+    <p style="font-size: 0.9rem; margin-top: 12px; color: var(--text-muted);">※「邪魔」「来るな」といった言葉は避けます。</p>
+  </section>
+
+  <!-- 注意ポイント（NGとサイン） -->
+  <section class="card">
+    <h2>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      5. 避けたいこと・悪影響のサイン
+    </h2>
+
+    <div class="alert-grid">
+      <!-- 赤信号 -->
+      <div class="alert-box alert-danger">
+        <h3>絶対避けたいこと（赤ライン）</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 8px;">特に<strong>愛情を撤回したように聞こえる言葉</strong>は避けます。</p>
+        <ul class="tag-list">
+          <li class="tag">もう知らん</li>
+          <li class="tag">勝手にしなさい</li>
+          <li class="tag">しつこい</li>
+          <li class="tag">面倒くさい</li>
+          <li class="tag">泣くなら来るな</li>
+          <li class="tag">長時間戻らない</li>
+          <li class="tag">子どもが謝るまで無視</li>
+          <li class="tag">ドアを強く閉める</li>
+          <li class="tag">毎回完全遮断する</li>
+        </ul>
+      </div>
+
+      <!-- 黄信号 -->
+      <div class="alert-box alert-warning">
+        <h3>注意すべきサイン（悪影響の兆候）</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 8px;">次が増えるようなら対応の見直しが必要です。（※今は心配不要です）</p>
+        <ul>
+          <li>「お父さん戻ってくる？」と頻繁に聞く</li>
+          <li>離れようとすると強くパニックになる</li>
+          <li>「私のこと嫌いなんでしょ」と言う</li>
+          <li>修復しても戻りにくい</li>
+          <li>普段の甘え方が不安定になる</li>
+          <li>学校生活や睡眠に影響が出る</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
